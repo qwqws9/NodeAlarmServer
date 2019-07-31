@@ -23,11 +23,11 @@ io.on('connection', function(socket) {
     
     // socket에 클라이언트 정보를 저장한다
     socket.userCode = data.userCode;
-    console.log(socket.userCode);
+    //console.log(socket.userCode);
     socket.nickname = data.nickname;
-    console.log(socket.nickname);
+    //console.log(socket.nickname);
     socket.profileImg = data.profileImg;
-    console.log(socket.profileImg);
+    //console.log(socket.profileImg);
 
     // 접속된 모든 클라이언트에게 메시지를 전송한다 //나중에 관리자에서 보낼거 하나 만들기
     //io.emit('login', data.userCode );
@@ -54,16 +54,42 @@ io.on('connection', function(socket) {
 		 message : msg
 	 })
   });
+  
+  socket.on('currentUser',function(data) {
+		 console.log("currentUser input");
+		 
+		 var search = data.search;
+		 console.log('userCode :'+search);
+		 var loc = data.loc;
+		 var msg = false;
+		 for_receiver_socket_id = userList[search];
+		 console.log('current socket id : '+for_receiver_socket_id);
+		 if(for_receiver_socket_id != undefined) {
+			 msg = true;
+			 
+		 }
+		 
+		 socket.emit('currentUser',{
+			 message : msg,
+			 loc : loc
+		 })
+	  });
 
   // force client disconnect from server
   socket.on('forceDisconnect', function() {
+	 console.log('disconnect 1111111')
     socket.disconnect();
   })
 
   socket.on('disconnect', function() {
-    console.log('user disconnected: ' + socket.userCode);
-    //var index = userList.indexOf(socket.userCode);
-    //userList.splice(index,1);
+    console.log('1 :: '+'user disconnected22222: ' + socket.userCode);
+    console.log('2 :: '+userList[socket.userCode]);
+    console.log(userList);
+    var index = userList.indexOf(socket.id);
+    console.log('위치 : '+index);
+    userList.splice(index,1);
+    userList.splice(index-1,1);
+    console.log(userList);
     
   });
 });
